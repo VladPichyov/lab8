@@ -1,11 +1,13 @@
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 
 #include "runner_subscription.h"
 #include "file_reader.h"
 #include "constants.h"
+#include <algorithm>
 
 // Фильтрация массива по заданному критерию
 runner_subscription** filter_subscriptions(
@@ -26,17 +28,22 @@ runner_subscription** filter_subscriptions(
     return filtered;
 }
 
-// Фильтр 1: бегуны, завершившие марафон менее чем за 3 часа
+// Фильтр 1: участники из клуба "Спартак"
+
+
+bool is_spartak_runner(runner_subscription* element) {
+    string club = element->club;
+    // Удаляем кавычки, если они есть
+    club.erase(remove(club.begin(), club.end(), '\"'), club.end());
+    return club == "Спартак";
+}
+
+// Фильтр 2: участники, результат которых лучше 2:50:00
 bool is_fast_runner(runner_subscription* element) {
     int finish_time = element->finish.hour * 3600 + element->finish.minute * 60 + element->finish.second;
     int start_time = element->start.hour * 3600 + element->start.minute * 60 + element->start.second;
 
-    return (finish_time - start_time) < 3 * 3600; // менее 3 часов
-}
-
-// Фильтр 2: бегуны, стартовавшие до 9:00 утра
-bool is_morning_runner(runner_subscription* element) {
-    return element->start.hour < 9;
+    return (finish_time - start_time) < (2 * 3600 + 50 * 60); // быстрее 2:50:00
 }
 
 int main()
@@ -59,8 +66,11 @@ int main()
         {
             cout << "Бегун...........: ";
             cout << subscriptions[i]->runner.last_name << " ";
-            cout << subscriptions[i]->runner.first_name[0] << ". ";
-            cout << subscriptions[i]->runner.middle_name[0] << ".\n";
+            cout << subscriptions[i]->runner.first_name << " ";
+            cout << subscriptions[i]->runner.middle_name << '\n';
+
+            cout << "Клуб............: ";
+            cout << subscriptions[i]->club << '\n';
 
             cout << "Время старта....: ";
             cout << setw(2) << setfill('0') << subscriptions[i]->start.hour << ':';
@@ -78,13 +88,13 @@ int main()
         // Выбор критерия отбора
         int choice;
         cout << "Выберите критерий отбора:\n";
-        cout << "1 - Бегуны, завершившие марафон менее чем за 3 часа\n";
-        cout << "2 - Бегуны, стартовавшие до 9:00 утра\n";
+        cout << "1 - Участники из клуба \"Спартак\"\n";
+        cout << "2 - Участники, пробежавшие быстрее 2:50:00\n";
         cout << "Ваш выбор: ";
         cin >> choice;
 
         bool (*filter_function)(runner_subscription*);
-        filter_function = (choice == 1) ? is_fast_runner : is_morning_runner;
+        filter_function = (choice == 1) ? is_spartak_runner : is_fast_runner;
 
         // Фильтрация списка
         int filtered_size;
@@ -95,13 +105,21 @@ int main()
         {
             cout << "Бегун...........: ";
             cout << filtered_runners[i]->runner.last_name << " ";
-            cout << filtered_runners[i]->runner.first_name[0] << ". ";
-            cout << filtered_runners[i]->runner.middle_name[0] << ".\n";
+            cout << filtered_runners[i]->runner.first_name << " ";
+            cout << filtered_runners[i]->runner.middle_name << '\n';
+
+            cout << "Клуб............: ";
+            cout << filtered_runners[i]->club << '\n';
 
             cout << "Время старта....: ";
             cout << setw(2) << setfill('0') << filtered_runners[i]->start.hour << ':';
             cout << setw(2) << setfill('0') << filtered_runners[i]->start.minute << ':';
             cout << setw(2) << setfill('0') << filtered_runners[i]->start.second << '\n';
+
+            cout << "Время финиша....: ";
+            cout << setw(2) << setfill('0') << filtered_runners[i]->finish.hour << ':';
+            cout << setw(2) << setfill('0') << filtered_runners[i]->finish.minute << ':';
+            cout << setw(2) << setfill('0') << filtered_runners[i]->finish.second << '\n';
 
             cout << '\n';
         }
