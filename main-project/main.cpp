@@ -13,6 +13,7 @@ int main()
     cout << "Лабораторная работа №8. GIT\n";
     cout << "Вариант №1. Результат марафона\n";
     cout << "Автор: Пичев Владислав\n\n";
+    cout << "Группа: 24ИСиТ1д";
 
     runner_subscription* subscriptions[MAX_FILE_ROWS_COUNT];
     int size;
@@ -58,6 +59,5 @@ int main()
     {
         cout << error << '\n';
     }
-
     return 0;
 }
