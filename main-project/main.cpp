@@ -137,7 +137,7 @@ void print_runners(runner_subscription* array[], int size) {
 int main() {
     setlocale(LC_ALL, "Russian");
     cout << "Лабораторная работа №8. GIT\n";
-    cout << "Вариант №1. Результат марафона\n";
+    cout << "variant 51. Результат марафона\n";
     cout << "Автор: Пичев Владислав\n\n";
     cout << "Группа: 24ИСиТ1д\n";
 
