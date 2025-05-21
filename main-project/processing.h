@@ -1,7 +1,8 @@
-#pragma once
 #ifndef PROCESSING_H
 #define PROCESSING_H
 
-int process(); // Прототип функции
+#include "runner_subscription.h"
 
-#endif // PROCESSING_H
+char* process(runner_subscription* array[], int size);
+
+#endif
