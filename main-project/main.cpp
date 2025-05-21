@@ -9,7 +9,7 @@ using namespace std;
 #include "file_reader.h"
 #include "constants.h"
 
-// РџСЂРѕС‚РѕС‚РёРїС‹ С„СѓРЅРєС†РёР№
+// Прототипы функций
 void bubble_sort(runner_subscription* array[], int size,
     int (*compare)(runner_subscription*, runner_subscription*));
 void quick_sort(runner_subscription* array[], int left, int right,
@@ -18,30 +18,30 @@ int compare_by_time(runner_subscription* a, runner_subscription* b);
 int compare_by_club_and_name(runner_subscription* a, runner_subscription* b);
 void print_runners(runner_subscription* array[], int size);
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РЅРѕСЂРјР°Р»РёР·Р°С†РёРё СЃС‚СЂРѕРєРё (СѓРґР°Р»РµРЅРёРµ РєР°РІС‹С‡РµРє Рё РїСЂРѕР±РµР»РѕРІ)
+// Функция для нормализации строки (удаление кавычек и пробелов)
 string normalize_string(const string& str) {
     string result = str;
-    // РЈРґР°Р»СЏРµРј РєР°РІС‹С‡РєРё
+    // Удаляем кавычки
     result.erase(remove(result.begin(), result.end(), '\"'), result.end());
-    // РЈРґР°Р»СЏРµРј РїСЂРѕР±РµР»С‹ РїРѕ РєСЂР°СЏРј
+    // Удаляем пробелы по краям
     result.erase(0, result.find_first_not_of(" \t\n\r\f\v"));
     result.erase(result.find_last_not_of(" \t\n\r\f\v") + 1);
     return result;
 }
 
-// Р¤РёР»СЊС‚СЂ 1: СѓС‡Р°СЃС‚РЅРёРєРё РёР· РєР»СѓР±Р° "РЎРїР°СЂС‚Р°Рє"
+// Фильтр 1: участники из клуба "Спартак"
 bool is_spartak_runner(runner_subscription* element) {
-    return normalize_string(element->club) == "РЎРїР°СЂС‚Р°Рє";
+    return normalize_string(element->club) == "Спартак";
 }
 
-// Р¤РёР»СЊС‚СЂ 2: СѓС‡Р°СЃС‚РЅРёРєРё, СЂРµР·СѓР»СЊС‚Р°С‚ РєРѕС‚РѕСЂС‹С… Р»СѓС‡С€Рµ 2:50:00
+// Фильтр 2: участники, результат которых лучше 2:50:00
 bool is_fast_runner(runner_subscription* element) {
     int finish_time = element->finish.hour * 3600 + element->finish.minute * 60 + element->finish.second;
     int start_time = element->start.hour * 3600 + element->start.minute * 60 + element->start.second;
     return (finish_time - start_time) < (2 * 3600 + 50 * 60);
 }
 
-// Р¤СѓРЅРєС†РёСЏ С„РёР»СЊС‚СЂР°С†РёРё
+// Функция фильтрации
 runner_subscription** filter_subscriptions(
     runner_subscription* array[],
     int size,
@@ -60,7 +60,7 @@ runner_subscription** filter_subscriptions(
     return filtered;
 }
 
-// Р¤СѓРЅРєС†РёРё СЃСЂР°РІРЅРµРЅРёСЏ РґР»СЏ СЃРѕСЂС‚РёСЂРѕРІРєРё
+// Функции сравнения для сортировки
 int compare_by_time(runner_subscription* a, runner_subscription* b) {
     int time_a = (a->finish.hour * 3600 + a->finish.minute * 60 + a->finish.second) -
         (a->start.hour * 3600 + a->start.minute * 60 + a->start.second);
@@ -79,7 +79,7 @@ int compare_by_club_and_name(runner_subscription* a, runner_subscription* b) {
     return string(a->runner.last_name).compare(string(b->runner.last_name));
 }
 
-// РђР»РіРѕСЂРёС‚РјС‹ СЃРѕСЂС‚РёСЂРѕРІРєРё
+// Алгоритмы сортировки
 void bubble_sort(runner_subscription* array[], int size,
     int (*compare)(runner_subscription*, runner_subscription*)) {
     for (int i = 0; i < size - 1; i++) {
@@ -112,21 +112,21 @@ void quick_sort(runner_subscription* array[], int left, int right,
     quick_sort(array, i, right, compare);
 }
 
-// Р¤СѓРЅРєС†РёСЏ РІС‹РІРѕРґР° СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
+// Функция вывода результатов
 void print_runners(runner_subscription* array[], int size) {
     for (int i = 0; i < size; i++) {
-        cout << "Р‘РµРіСѓРЅ...........: "
+        cout << "Бегун...........: "
             << array[i]->runner.last_name << " "
             << array[i]->runner.first_name << " "
             << array[i]->runner.middle_name << '\n';
-        cout << "РљР»СѓР±............: " << array[i]->club << '\n';
+        cout << "Клуб............: " << array[i]->club << '\n';
 
-        cout << "Р’СЂРµРјСЏ СЃС‚Р°СЂС‚Р°....: "
+        cout << "Время старта....: "
             << setw(2) << setfill('0') << array[i]->start.hour << ':'
             << setw(2) << setfill('0') << array[i]->start.minute << ':'
             << setw(2) << setfill('0') << array[i]->start.second << '\n';
 
-        cout << "Р’СЂРµРјСЏ С„РёРЅРёС€Р°....: "
+        cout << "Время финиша....: "
             << setw(2) << setfill('0') << array[i]->finish.hour << ':'
             << setw(2) << setfill('0') << array[i]->finish.minute << ':'
             << setw(2) << setfill('0') << array[i]->finish.second << "\n\n";
@@ -135,10 +135,10 @@ void print_runners(runner_subscription* array[], int size) {
 
 int main() {
     setlocale(LC_ALL, "Russian");
-    cout << "Р›Р°Р±РѕСЂР°С‚РѕСЂРЅР°СЏ СЂР°Р±РѕС‚Р° в„–8. GIT\n";
-    cout << "Р’Р°СЂРёР°РЅС‚ в„–1. Р РµР·СѓР»СЊС‚Р°С‚ РјР°СЂР°С„РѕРЅР°\n";
-    cout << "РђРІС‚РѕСЂ: РџРёС‡РµРІ Р’Р»Р°РґРёСЃР»Р°РІ\n\n";
-    cout << "Р“СЂСѓРїРїР°: 24РРЎРёРў1Рґ\n";
+    cout << "Лабораторная работа №8. GIT\n";
+    cout << "Вариант №1. Результат марафона\n";
+    cout << "Автор: Пичев Владислав\n\n";
+    cout << "Группа: 24ИСиТ1д\n";
 
     runner_subscription* subscriptions[MAX_FILE_ROWS_COUNT];
     int size;
@@ -147,27 +147,27 @@ int main() {
         read("data.txt", subscriptions, size);
 
         while (true) {
-            cout << "\nР’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ:\n";
-            cout << "1 - Р¤РёР»СЊС‚СЂР°С†РёСЏ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ\n";
-            cout << "2 - РЎРѕСЂС‚РёСЂРѕРІРєР° СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ\n";
-            cout << "3 - Р’С‹С…РѕРґ\n";
-            cout << "Р’Р°С€ РІС‹Р±РѕСЂ: ";
+            cout << "\nВыберите действие:\n";
+            cout << "1 - Фильтрация результатов\n";
+            cout << "2 - Сортировка результатов\n";
+            cout << "3 - Выход\n";
+            cout << "Ваш выбор: ";
 
             int main_choice;
             cin >> main_choice;
 
             if (main_choice == 1) {
-                // Р¤РёР»СЊС‚СЂР°С†РёСЏ
-                cout << "\nР’С‹Р±РµСЂРёС‚Рµ РєСЂРёС‚РµСЂРёР№ РѕС‚Р±РѕСЂР°:\n";
-                cout << "1 - РЈС‡Р°СЃС‚РЅРёРєРё РёР· РєР»СѓР±Р° \"РЎРїР°СЂС‚Р°Рє\"\n";
-                cout << "2 - РЈС‡Р°СЃС‚РЅРёРєРё, РїСЂРѕР±РµР¶Р°РІС€РёРµ Р±С‹СЃС‚СЂРµРµ 2:50:00\n";
-                cout << "Р’Р°С€ РІС‹Р±РѕСЂ: ";
+                // Фильтрация
+                cout << "\nВыберите критерий отбора:\n";
+                cout << "1 - Участники из клуба \"Спартак\"\n";
+                cout << "2 - Участники, пробежавшие быстрее 2:50:00\n";
+                cout << "Ваш выбор: ";
 
                 int filter_choice;
                 cin >> filter_choice;
 
                 if (filter_choice < 1 || filter_choice > 2) {
-                    cout << "РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ!\n";
+                    cout << "Неверный выбор!\n";
                     continue;
                 }
 
@@ -177,43 +177,43 @@ int main() {
 
                 if (filter_choice == 1) {
                     filtered = filter_subscriptions(subscriptions, size, is_spartak_runner, filtered_size);
-                    filter_name = "РёР· РєР»СѓР±Р° \"РЎРїР°СЂС‚Р°Рє\"";
+                    filter_name = "из клуба \"Спартак\"";
                 }
                 else {
                     filtered = filter_subscriptions(subscriptions, size, is_fast_runner, filtered_size);
-                    filter_name = "СЃ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р»СѓС‡С€Рµ 2:50:00";
+                    filter_name = "с результатом лучше 2:50:00";
                 }
 
                 if (filtered_size == 0) {
-                    cout << "\nРќРµС‚ СѓС‡Р°СЃС‚РЅРёРєРѕРІ " << filter_name << "\n";
+                    cout << "\nНет участников " << filter_name << "\n";
                 }
                 else {
-                    cout << "\n***** РќР°Р№РґРµРЅРѕ " << filtered_size << " СѓС‡Р°СЃС‚РЅРёРєРѕРІ " << filter_name << " *****\n\n";
+                    cout << "\n***** Найдено " << filtered_size << " участников " << filter_name << " *****\n\n";
                     print_runners(filtered, filtered_size);
                 }
 
                 delete[] filtered;
             }
             else if (main_choice == 2) {
-                // РЎРѕСЂС‚РёСЂРѕРІРєР°
-                cout << "\nР’С‹Р±РµСЂРёС‚Рµ РјРµС‚РѕРґ СЃРѕСЂС‚РёСЂРѕРІРєРё:\n";
+                // Сортировка
+                cout << "\nВыберите метод сортировки:\n";
                 cout << "1 - Bubble Sort\n";
                 cout << "2 - Quick Sort\n";
-                cout << "Р’Р°С€ РІС‹Р±РѕСЂ: ";
+                cout << "Ваш выбор: ";
 
                 int sort_choice;
                 cin >> sort_choice;
 
-                cout << "\nР’С‹Р±РµСЂРёС‚Рµ РєСЂРёС‚РµСЂРёР№ СЃРѕСЂС‚РёСЂРѕРІРєРё:\n";
-                cout << "1 - РџРѕ РІСЂРµРјРµРЅРё Р·Р°Р±РµРіР°\n";
-                cout << "2 - РџРѕ РєР»СѓР±Сѓ Рё С„Р°РјРёР»РёРё\n";
-                cout << "Р’Р°С€ РІС‹Р±РѕСЂ: ";
+                cout << "\nВыберите критерий сортировки:\n";
+                cout << "1 - По времени забега\n";
+                cout << "2 - По клубу и фамилии\n";
+                cout << "Ваш выбор: ";
 
                 int compare_choice;
                 cin >> compare_choice;
 
                 if ((sort_choice < 1 || sort_choice > 2) || (compare_choice < 1 || compare_choice > 2)) {
-                    cout << "РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ!\n";
+                    cout << "Неверный выбор!\n";
                     continue;
                 }
 
@@ -226,24 +226,24 @@ int main() {
                         (compare_choice == 1) ? compare_by_time : compare_by_club_and_name);
                 }
 
-                cout << "\n***** РћС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Рµ СЂРµР·СѓР»СЊС‚Р°С‚С‹ *****\n\n";
+                cout << "\n***** Отсортированные результаты *****\n\n";
                 print_runners(subscriptions, size);
             }
             else if (main_choice == 3) {
                 break;
             }
             else {
-                cout << "РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ!\n";
+                cout << "Неверный выбор!\n";
             }
         }
 
-        // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
+        // Освобождение памяти
         for (int i = 0; i < size; i++) {
             delete subscriptions[i];
         }
     }
     catch (const char* error) {
-        cout << "РћС€РёР±РєР°: " << error << '\n';
+        cout << "Ошибка: " << error << '\n';
     }
 
     return 0;
